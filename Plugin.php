@@ -33,7 +33,11 @@ class Plugin extends PluginBase
         return [
             'sixgweb.listsaver.access' => [
                 'tab' => 'List Saver',
-                'label' => 'Access List Saver'
+                'label' => 'Access Saved Lists'
+            ],
+            'sixgweb.listsaver.manage' => [
+                'tab' => 'List Saver',
+                'label' => 'Manage Lists'
             ],
         ];
     }

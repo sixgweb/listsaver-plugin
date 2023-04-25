@@ -1,8 +1,11 @@
-<ul class="list-unstyled m-0 mt-2">
+<?php $canManageListSaver = \BackendAuth::userHasAccess('sixgweb.listsaver.manage'); ?>
+
+<ul class="list-unstyled m-0 <?= $canManageListSaver ? 'mt-2' : '' ?>">
     <?php foreach ($filterListPreferences as $id => $name): ?>
     <li>
         <div class="d-flex g-0">
         <a data-request="onApplyFilterListPreference" data-request-data="filter_list_preference:<?= $id ?>" class="list-item w-100" href="#"><?= $name ?></a>
+        <?php if ($canManageListSaver) : ?>
         <a 
             data-request="onDeleteFilterListPreference" 
             data-request-data="filter_list_preference:<?= $id ?>" 
@@ -10,6 +13,7 @@
             data-request-success="document.getElementById('filterListPreferencesToggle').click();"
             class="dropdown-item px-1 w-auto text-secondary" 
             href="#"><i class="bi-x-circle-fill"></i></a>
+        <?php endif; ?>
         </div>
     </li>
     <?php endforeach ?>

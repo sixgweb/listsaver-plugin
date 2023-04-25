@@ -3,10 +3,12 @@
         Save/Load List
     </button>    
     <?= Form::ajax('onSaveFilterListPreference', ['class' => 'dropdown-menu control-dropdown p-4', 'style' => 'min-width:200px']) ?>
+        <?php if (\BackendAuth::userHasAccess('sixgweb.listsaver.manage')) : ?>
         <div class="input-group input-group-sm">
             <input type="text" id="filterListName" class="form-control top-0 me-0" name="filter_list_name" placeholder="List Name">
             <button type="submit" class="btn btn-outline-secondary me-0" id="filterListSave" disabled>Save</button>
         </div>
+        <?php endif; ?>
         <div id="filterListPreferencesContainer">
             <?= $this->filterListPreferencesRenderPreferences() ?>
         </div>

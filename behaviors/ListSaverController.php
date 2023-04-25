@@ -43,6 +43,10 @@ class ListSaverController extends ControllerBehavior
 
     public function onSaveFilterListPreference()
     {
+        if (!\BackendAuth::userHasAccess('sixgweb.listsaver.manage')) {
+            return;
+        }
+
         $listWidget = $this->controller->listGetWidget();
         $list = [
             'visible' => $listWidget->getUserPreference('visible'),
@@ -70,6 +74,10 @@ class ListSaverController extends ControllerBehavior
 
     public function onDeleteFilterListPreference()
     {
+        if (!\BackendAuth::userHasAccess('sixgweb.listsaver.manage')) {
+            return;
+        }
+
         if (!$id = post('filter_list_preference')) {
             return;
         }
@@ -85,6 +93,10 @@ class ListSaverController extends ControllerBehavior
 
     public function listSaverRender()
     {
+        if (!\BackendAuth::userHasAccess('sixgweb.listsaver.access')) {
+            return;
+        }
+
         $this->vars['filterListPreferences'] = Preference::where('namespace', $this->getPreferenceNamespace())
             ->where('group', $this->getPreferenceGroup())
             ->lists('name', 'id');
