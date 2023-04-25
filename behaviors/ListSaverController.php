@@ -83,7 +83,7 @@ class ListSaverController extends ControllerBehavior
         return $this->filterListPreferencesRefresh();
     }
 
-    public function filterListPreferencesRender()
+    public function listSaverRender()
     {
         $this->vars['filterListPreferences'] = Preference::where('namespace', $this->getPreferenceNamespace())
             ->where('group', $this->getPreferenceGroup())
