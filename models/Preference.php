@@ -12,6 +12,7 @@ use Model;
 class Preference extends Model
 {
     use \October\Rain\Database\Traits\Validation;
+    use \October\Rain\Database\Traits\Multisite;
 
     /**
      * @var string table name
@@ -35,4 +36,6 @@ class Preference extends Model
         'list',
         'filter',
     ];
+
+    public $propagatable = [];
 }

@@ -3,8 +3,12 @@
 <ul class="list-unstyled m-0 <?= $canManageListSaver ? 'mt-2' : '' ?>">
     <?php foreach ($filterListPreferences as $id => $name): ?>
     <li>
-        <div class="d-flex g-0">
-        <a data-request="onApplyFilterListPreference" data-request-data="filter_list_preference:<?= $id ?>" class="list-item w-100" href="#"><?= $name ?></a>
+        <div class="d-flex g-0 align-items-center">
+        <a 
+            data-request="onApplyFilterListPreference" 
+            data-request-data="filter_list_preference:<?= $id ?>" 
+            class="dropdown-item w-100" 
+            href="#"><?= $name ?></a>
         <?php if ($canManageListSaver) : ?>
         <a 
             data-request="onDeleteFilterListPreference" 
