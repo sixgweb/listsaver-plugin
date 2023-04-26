@@ -28,6 +28,7 @@ class Preference extends Model
         'name',
         'namespace',
         'group',
+        'blueprint_uuid',
         'list',
         'filter',
     ];

@@ -2,8 +2,10 @@
 
 namespace Sixgweb\ListSaver;
 
-use Backend;
+use Event;
 use System\Classes\PluginBase;
+
+use function Ramsey\Uuid\v1;
 
 /**
  * Plugin Information File
@@ -19,10 +21,35 @@ class Plugin extends PluginBase
     {
         return [
             'name' => 'ListSaver',
-            'description' => 'No description provided yet...',
+            'description' => 'Adds ability to save the current ListController filter and list setup values',
             'author' => 'Sixgweb',
-            'icon' => 'icon-leaf'
+            'icon' => 'icon-list'
         ];
+    }
+
+    public function boot()
+    {
+        Event::listen('backend.filter.extendScopes', function ($filterWidget) {
+
+            //Check if is ListController
+            if (!$filterWidget->getController()->methodExists('listExtendColumns')) {
+                return;
+            }
+
+            $dependsOn = [];
+
+            if ($allScopes = $filterWidget->getScopes()) {
+                $dependsOn = array_keys($allScopes);
+            }
+
+            $filterWidget->addScopes([
+                'listsaver' => [
+                    'label' => 'List Saver',
+                    'type' => 'listsaver',
+                    'dependsOn' => $dependsOn,
+                ],
+            ]);
+        }, -1);
     }
 
     /**
@@ -39,6 +66,13 @@ class Plugin extends PluginBase
                 'tab' => 'List Saver',
                 'label' => 'Manage Lists'
             ],
+        ];
+    }
+
+    public function registerFilterWidgets()
+    {
+        return [
+            \Sixgweb\ListSaver\FilterWidgets\ListSaver::class => 'listsaver',
         ];
     }
 }

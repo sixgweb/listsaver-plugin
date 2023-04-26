@@ -1,3 +1,6 @@
 1.0.1:
   - First version of list saver
   - create_preferences_table.php
+1.0.2:
+  - Add blueprint uuid to preferences table
+  - add_blueprint_uuid_to_preferences_table.php

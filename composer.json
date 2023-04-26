@@ -1,7 +1,7 @@
 {
     "name": "sixgweb/listsaver-plugin",
     "type": "october-plugin",
-    "description": "No description provided yet...",
+    "description": "Adds ability to save the current ListController filter and list setup values",
     "require": {
         "composer/installers": "~1.0"
     }

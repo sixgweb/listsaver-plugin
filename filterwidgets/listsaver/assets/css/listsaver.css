@@ -1,0 +1,9 @@
+/*
+ * This is a sample StyleSheet file used by ListSaver
+ *
+ * You can delete this file if you want
+ */
+#Filter-listFilter-scope-listsaver-group {
+    float: right;
+    margin-right: -10px;
+}
