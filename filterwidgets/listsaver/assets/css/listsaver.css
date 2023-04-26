@@ -3,7 +3,7 @@
  *
  * You can delete this file if you want
  */
-#Filter-listFilter-scope-listsaver-group {
+.filter-group:has([data-scope-name="listsaver"]) {
     float: right;
     margin-right: -10px;
 }
