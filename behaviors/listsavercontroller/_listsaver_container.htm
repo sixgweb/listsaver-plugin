@@ -1,0 +1,36 @@
+<div class="dropdown dropdown-fixed">
+    <button type="button" class="btn btn-default dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" id="listSaverToggle">
+        List Saver
+    </button>    
+    <?= Form::ajax('onSaveListSaverPreference', ['class' => 'dropdown-menu control-dropdown p-4', 'style' => 'min-width:200px', 'id' => 'listSaverForm']) ?>
+        <?php if (\BackendAuth::userHasAccess('sixgweb.listsaver.manage')) : ?>
+        <div class="input-group input-group-sm">
+            <input type="text" id="listSaverName" class="form-control top-0 me-0" name="list_saver_name" placeholder="List Name" autocomplete="off">
+            <button type="submit" class="btn btn-outline-secondary me-0" id="listSaverSave" disabled>Save</button>
+        </div>
+        <?php endif; ?>
+        <div id="listSaverContainer">
+            <?= $this->listSaverRenderPreferences() ?>
+        </div>
+    <?= Form::close() ?>
+</div>
+
+<script>
+    (function() {
+        let input = document.getElementById('listSaverName');
+        let submit = document.getElementById('listSaverSave');
+        let container = document.getElementById('listSaverContainer');
+
+        input.addEventListener('keyup', (e) => {
+            if (e.target.value == '') {
+                submit.setAttribute('disabled', 'disabled');
+            } else {
+                submit.removeAttribute('disabled');
+            }
+        });
+
+        container.addEventListener('ajax:update', (e) => {
+            input.value = '';
+        });
+    })();
+</script>

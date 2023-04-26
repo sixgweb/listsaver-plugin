@@ -15,9 +15,9 @@ class ListSaverController extends ControllerBehavior
         $this->controller = $controller;
     }
 
-    public function onApplyFilterListPreference()
+    public function onApplyListSaverPreference()
     {
-        if (!$id = post('filter_list_preference')) {
+        if (!$id = post('list_saver_preference')) {
             return;
         }
 
@@ -25,11 +25,11 @@ class ListSaverController extends ControllerBehavior
             return;
         }
 
+        $result = [];
         $listWidget = $this->controller->listGetWidget();
         $listWidget->putUserPreference('visible', $preference->list['visible']);
         $listWidget->putUserPreference('order', $preference->list['order']);
         $listWidget->putUserPreference('per_page', $preference->list['per_page']);
-        $result = $this->controller->listRefresh();
 
         if ($filterWidget = $this->controller->listGetFilterWidget()) {
             foreach ($filterWidget->getScopes() as $scope) {
@@ -38,10 +38,10 @@ class ListSaverController extends ControllerBehavior
             }
         }
 
-        return $result;
+        return $result + $this->controller->listRefresh();
     }
 
-    public function onSaveFilterListPreference()
+    public function onSaveListSaverPreference()
     {
         if (!\BackendAuth::userHasAccess('sixgweb.listsaver.manage')) {
             return;
@@ -62,23 +62,23 @@ class ListSaverController extends ControllerBehavior
         }
 
         Preference::create([
-            'name' => post('filter_list_name', 'New Preference'),
+            'name' => post('list_saver_name', 'New Preference'),
             'list' => $list,
             'filter' => $filter,
             'namespace' => $this->getPreferenceNamespace(),
             'group' => $this->getPreferenceGroup(),
         ]);
 
-        return $this->filterListPreferencesRefresh();
+        return $this->listSaverRefresh();
     }
 
-    public function onDeleteFilterListPreference()
+    public function onDeleteListSaverPreference()
     {
         if (!\BackendAuth::userHasAccess('sixgweb.listsaver.manage')) {
             return;
         }
 
-        if (!$id = post('filter_list_preference')) {
+        if (!$id = post('list_saver_preference')) {
             return;
         }
 
@@ -88,7 +88,7 @@ class ListSaverController extends ControllerBehavior
 
         $preference->delete();
 
-        return $this->filterListPreferencesRefresh();
+        return $this->listSaverRefresh();
     }
 
     public function listSaverRender()
@@ -97,23 +97,23 @@ class ListSaverController extends ControllerBehavior
             return;
         }
 
-        $this->vars['filterListPreferences'] = Preference::where('namespace', $this->getPreferenceNamespace())
+        $this->vars['listSaverPreferences'] = Preference::where('namespace', $this->getPreferenceNamespace())
             ->where('group', $this->getPreferenceGroup())
             ->lists('name', 'id');
-        return $this->makeView('_filterlist_container');
+        return $this->makeView('_listsaver_container');
     }
 
-    public function filterListPreferencesRenderPreferences()
+    public function listSaverRenderPreferences()
     {
-        return $this->makeView('_filterlist_preferences');
+        return $this->makeView('_listsaver_preferences');
     }
 
-    protected function filterListPreferencesRefresh()
+    protected function listSaverRefresh()
     {
-        $this->vars['filterListPreferences'] = Preference::where('namespace', $this->getPreferenceNamespace())
+        $this->vars['listSaverPreferences'] = Preference::where('namespace', $this->getPreferenceNamespace())
             ->where('group', $this->getPreferenceGroup())
             ->lists('name', 'id');
-        return ['#filterListPreferencesContainer' => $this->filterListPreferencesRenderPreferences()];
+        return ['#listSaverContainer' => $this->listSaverRenderPreferences()];
     }
 
     protected function getPreferenceNamespace()
