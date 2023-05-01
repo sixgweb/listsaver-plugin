@@ -31,6 +31,13 @@ class Plugin extends PluginBase
     {
         Event::listen('system.extendConfigFile', function ($path, $config) {
             if (strpos($path, 'config_list.yaml')) {
+                $showSetup = $config['showSetup'] ?? false;
+                $hasFilter = isset($config['filter']);
+
+                if (!$showSetup && !$hasFilter) {
+                    return $config;
+                }
+
                 $config['filter'] = $config['filter'] ?? [];
                 return $config;
             }

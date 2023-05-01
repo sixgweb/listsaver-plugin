@@ -83,6 +83,10 @@ class ListSaver extends FilterWidgetBase
             return;
         }
 
+        if (!$name = trim(post('list_saver_name'))) {
+            return;
+        }
+
         $listWidget = $this->controller->listGetWidget();
         $list = [
             'visible' => $listWidget->getUserPreference('visible'),
@@ -98,7 +102,7 @@ class ListSaver extends FilterWidgetBase
         }
 
         $preference = Preference::create([
-            'name' => post('list_saver_name', 'New Preference'),
+            'name' => $name,
             'list' => $list,
             'filter' => $filter,
             'namespace' => $this->getPreferenceNamespace(),
