@@ -18,6 +18,17 @@ class ListSaver extends FilterWidgetBase
 
     public function init()
     {
+        //For now, clear list saver if any refresh occurs on the list setup.
+        //TODO: Check if list setup has changed and only clear if it has.
+        Event::listen('backend.list.refresh', function ($listWidget) {
+            if (!$filterWidget = $listWidget->getController()->listGetFilterWidget()) {
+                return;
+            }
+            $scope = $filterWidget->getScope('listsaver');
+            $filterWidget->putScopeValue('listsaver', null);
+            $result['#' . $scope->getId('group')] = $filterWidget->makePartial('scope', ['scope' => $scope]);
+            return $result;
+        });
     }
 
     public function render()
@@ -119,9 +130,7 @@ class ListSaver extends FilterWidgetBase
 
         if ($value = $this->getLoadValue()) {
             if (key($value) == $id) {
-                $filterWidget = $this->controller->listGetFilterWidget();
-                $scope = $filterWidget->getScope('listsaver');
-                $filterWidget->putScopeValue('listsaver', null);
+                $this->controller->listGetFilterWidget()->putScopeValue('listsaver', null);
             }
         }
 

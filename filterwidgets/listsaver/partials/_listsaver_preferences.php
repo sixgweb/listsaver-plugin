@@ -13,6 +13,6 @@
             </li>
         <?php endforeach ?>
     <?php else : ?>
-        <li class="text-muted">No saved lists</li>
+        <li class="text-muted"><?= __('No saved lists') ?></li>
     <?php endif; ?>
 </ul>

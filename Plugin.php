@@ -29,6 +29,13 @@ class Plugin extends PluginBase
 
     public function boot()
     {
+        Event::listen('system.extendConfigFile', function ($path, $config) {
+            if (strpos($path, 'config_list.yaml')) {
+                $config['filter'] = $config['filter'] ?? [];
+                return $config;
+            }
+        });
+
         Event::listen('backend.filter.extendScopes', function ($filterWidget) {
 
             //Check if is ListController

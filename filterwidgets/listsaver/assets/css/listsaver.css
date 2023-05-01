@@ -1,9 +1,9 @@
-/*
- * This is a sample StyleSheet file used by ListSaver
- *
- * You can delete this file if you want
- */
+.control-filter:has([data-scope-name="listsaver"]) {
+    display: flex;
+    flex-wrap: wrap;
+}
+
 .filter-group:has([data-scope-name="listsaver"]) {
-    float: right;
+    margin-left: auto;
     margin-right: -10px;
 }
