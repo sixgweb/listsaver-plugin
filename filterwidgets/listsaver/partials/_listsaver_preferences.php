@@ -4,10 +4,10 @@
         <?php foreach ($listSaverPreferences as $id => $name) : ?>
             <li>
                 <div class="d-flex g-0 align-items-center">
-                    <a data-request="onApplyListSaverPreference" data-request-data="list_saver_preference:<?= $id ?>" data-request-complete="$(document).trigger('mousedown');" class="dropdown-item w-100" href="#"><?= $name ?></a>
+                    <a data-request="<?= $this->getEventHandler('onApplyListSaverPreference') ?>" data-request-data="list_saver_preference:<?= $id ?>" class="dropdown-item w-100" href="#"><?= $name ?></a>
 
                     <?php if ($canManageListSaver) : ?>
-                        <a data-request="onDeleteListSaverPreference" data-request-data="list_saver_preference:<?= $id ?>" data-request-success="" class="dropdown-item px-1 w-auto text-secondary" href="#"><i class="bi-x-circle-fill"></i></a>
+                        <a data-request="<?= $this->getEventHandler('onDeleteListSaverPreference') ?>" data-request-data="list_saver_preference:<?= $id ?>" data-request-success="" class="dropdown-item px-1 w-auto text-secondary" href="#"><i class="bi-x-circle-fill"></i></a>
                     <?php endif; ?>
                 </div>
             </li>

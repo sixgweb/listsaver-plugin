@@ -15,18 +15,22 @@ use Sixgweb\ListSaver\Models\Preference;
 class ListSaver extends FilterWidgetBase
 {
     public $listFilterWidget;
+    public $listWidget;
 
     public function init()
     {
         //For now, clear list saver if any refresh occurs on the list setup.
         //TODO: Check if list setup has changed and only clear if it has.
         Event::listen('backend.list.refresh', function ($listWidget) {
-            if (!$filterWidget = $listWidget->getController()->listGetFilterWidget()) {
+            $this->setProperties();
+
+            //No listfilterwidget or posted a list preference, so don't clear.
+            if (!$this->listFilterWidget || post('list_saver_preference')) {
                 return;
             }
-            $scope = $filterWidget->getScope('listsaver');
-            $filterWidget->putScopeValue('listsaver', null);
-            $result['#' . $scope->getId('group')] = $filterWidget->makePartial('scope', ['scope' => $scope]);
+            $scope = $this->listFilterWidget->getScope('listsaver');
+            $this->listFilterWidget->putScopeValue('listsaver', null);
+            $result['#' . $scope->getId('group')] = $this->listFilterWidget->makePartial('scope', ['scope' => $scope]);
             return $result;
         });
     }
@@ -45,12 +49,18 @@ class ListSaver extends FilterWidgetBase
 
     public function prepareVars()
     {
-        $this->listFilterWidget = $this->controller->listGetFilterWidget();
+        $this->setProperties();
         $this->vars['listSaverPreferences'] = $this->getListSaverPreferences();
         $this->vars['listFilterWidget'] = $this->listFilterWidget;
         $this->vars['scope'] = $this->filterScope;
         $this->vars['name'] = $this->getScopeName();
         $this->vars['value'] = $this->getLoadValue();
+    }
+
+    public function setProperties()
+    {
+        $this->listFilterWidget = $this->controller->listGetFilterWidget();
+        $this->listWidget = $this->controller->listGetWidget();
     }
 
     public function loadAssets()
@@ -65,6 +75,7 @@ class ListSaver extends FilterWidgetBase
             return null;
         }
 
+        exit('here');
         if ($id = post('list_saver_preference')) {
             $preference = Preference::find($id);
             return [$preference->id = $preference->name];
@@ -87,16 +98,20 @@ class ListSaver extends FilterWidgetBase
             return;
         }
 
-        $listWidget = $this->controller->listGetWidget();
+        $this->setProperties();
+
         $list = [
-            'visible' => $listWidget->getUserPreference('visible'),
-            'order' => $listWidget->getUserPreference('order'),
-            'per_page' => $listWidget->getUserPreference('per_page'),
+            'visible' => $this->listWidget->getUserPreference('visible'),
+            'order' => $this->listWidget->getUserPreference('order'),
+            'per_page' => $this->listWidget->getUserPreference('per_page'),
         ];
 
         $filter = [];
-        if ($filterWidget = $this->controller->listGetFilterWidget()) {
-            foreach ($filterWidget->getScopes() as $scope) {
+        if ($this->listFilterWidget) {
+            foreach ($this->listFilterWidget->getScopes() as $scope) {
+                if ($scope->scopeName == 'listsaver') {
+                    continue;
+                }
                 $filter[$scope->scopeName] = $scope->scopeValue;
             }
         }
@@ -110,10 +125,13 @@ class ListSaver extends FilterWidgetBase
             'blueprint_uuid' => $this->controller->vars['activeSource']->uuid ?? null,
         ]);
 
-        $scope = $filterWidget->getScope('listsaver');
-        $filterWidget->putScopeValue('listsaver', [$preference->id => $preference->name]);
+        $scope = $this->listFilterWidget->getScope('listsaver');
+        $this->listFilterWidget->putScopeValue('listsaver', [$preference->id => $preference->name]);
 
-        return ['#' . $scope->getId('group') => $filterWidget->makePartial('scope', ['scope' => $scope])];
+        return [
+            '#' . $scope->getId('group') => $this->listFilterWidget->makePartial('scope', ['scope' => $scope]),
+            'closePopover' => true,
+        ];
     }
 
     public function onDeleteListSaverPreference()
@@ -130,15 +148,22 @@ class ListSaver extends FilterWidgetBase
             return;
         }
 
+        $this->setProperties();
+
         $preference->delete();
+
+        $result = $this->listSaverRefresh();
 
         if ($value = $this->getLoadValue()) {
             if (key($value) == $id) {
-                $this->controller->listGetFilterWidget()->putScopeValue('listsaver', null);
+                $scope = $this->listFilterWidget->getScope('listsaver');
+                $this->listFilterWidget->putScopeValue($scope, null);
+                $result['#' . $scope->getId('group')] = $this->listFilterWidget->makePartial('scope', ['scope' => $scope]);
+                $result['closePopover'] = true;
             }
         }
 
-        return $this->listSaverRefresh();
+        return $result;
     }
 
     public function onApplyListSaverPreference()
@@ -151,20 +176,21 @@ class ListSaver extends FilterWidgetBase
             return;
         }
 
-        $result = [];
-        $listWidget = $this->controller->listGetWidget();
-        $listWidget->putUserPreference('visible', $preference->list['visible']);
-        $listWidget->putUserPreference('order', $preference->list['order']);
-        $listWidget->putUserPreference('per_page', $preference->list['per_page']);
+        $this->setProperties();
 
-        if ($filterWidget = $this->controller->listGetFilterWidget()) {
-            foreach ($filterWidget->getScopes() as $scope) {
+        $result = ['closePopover' => true];
+        $this->listWidget->putUserPreference('visible', $preference->list['visible']);
+        $this->listWidget->putUserPreference('order', $preference->list['order']);
+        $this->listWidget->putUserPreference('per_page', $preference->list['per_page']);
+
+        if ($this->listFilterWidget) {
+            foreach ($this->listFilterWidget->getScopes() as $scope) {
                 if ($scope->scopeName == 'listsaver') {
-                    $filterWidget->putScopeValue($scope, [$preference->id => $preference->name]);
+                    $this->listFilterWidget->putScopeValue($scope, [$preference->id => $preference->name]);
                 } else {
-                    $filterWidget->putScopeValue($scope, $preference->filter[$scope->scopeName] ?? null);
+                    $this->listFilterWidget->putScopeValue($scope, $preference->filter[$scope->scopeName] ?? null);
                 }
-                $result['#' . $scope->getId('group')] = $filterWidget->makePartial('scope', ['scope' => $scope]);
+                $result['#' . $scope->getId('group')] = $this->listFilterWidget->makePartial('scope', ['scope' => $scope]);
             }
         }
 

@@ -1,10 +1,8 @@
-/*
- * This is a sample JavaScript file used by ListSaver
- *
- * You can delete this file if you want
- */
-(function ($) {
-    addEventListener('render', (e) => {
-        return;
+(function () {
+    addEventListener('ajax:update', (e) => {
+        //Hide popover by triggering mousedown event on document
+        if (e.detail.data.closePopover ?? false) {
+            document.dispatchEvent(new Event('mousedown'));
+        }
     });
 })();
