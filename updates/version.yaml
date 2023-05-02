@@ -4,3 +4,5 @@
 1.0.2:
   - Add blueprint uuid to preferences table
   - add_blueprint_uuid_to_preferences_table.php
+1.0.3:
+  - Check if controller action is index

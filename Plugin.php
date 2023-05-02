@@ -50,6 +50,11 @@ class Plugin extends PluginBase
                 return;
             }
 
+            //Check if is index action in ListController
+            if ($filterWidget->getController()->getAction() != 'index') {
+                return;
+            }
+
             $dependsOn = [];
 
             if ($allScopes = $filterWidget->getScopes()) {
