@@ -1,6 +1,7 @@
 .control-filter:has([data-scope-name="listsaver"]) {
     display: flex;
     flex-wrap: wrap;
+    align-items: end;
 }
 
 .filter-group:has([data-scope-name="listsaver"]) {
