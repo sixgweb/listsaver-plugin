@@ -17,7 +17,7 @@ class AddBluePrintUuidToPreferencesTable extends Migration
     public function down()
     {
         Schema::table('sixgweb_listsaver_preferences', function ($table) {
-            $table->dropColumn(['uuid']);
+            $table->dropColumn(['blueprint_uuid']);
         });
     }
 }

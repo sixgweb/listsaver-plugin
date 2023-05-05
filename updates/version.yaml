@@ -12,3 +12,5 @@
   - Flex align and button style
 1.0.6:
   - closePopover return data, use getEventHandler and add refresh listener check
+1.0.7:
+  - Fix blueprint_uuid migration
