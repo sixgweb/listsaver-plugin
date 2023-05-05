@@ -16,3 +16,7 @@
   - Fix blueprint_uuid migration
 1.0.8:
   - Trigger list.extendColumns to load other plugin columns definitions, before refreshing the list.
+1.0.9:
+  - Add backend user id, public/private lists, share settings/permissions and event for extension
+  - add_backend_user_id_to_preferences_table.php
+  - add_is_private_to_preferences_table.php

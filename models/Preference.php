@@ -28,6 +28,8 @@ class Preference extends Model
         'name',
         'namespace',
         'group',
+        'backend_user_id',
+        'is_private',
         'blueprint_uuid',
         'list',
         'filter',

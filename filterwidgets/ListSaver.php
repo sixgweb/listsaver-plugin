@@ -4,7 +4,9 @@ namespace Sixgweb\ListSaver\FilterWidgets;
 
 use Str;
 use Event;
+use BackendAuth;
 use Backend\Classes\FilterWidgetBase;
+use Sixgweb\ListSaver\Models\Settings;
 use Sixgweb\ListSaver\Models\Preference;
 
 /**
@@ -28,6 +30,7 @@ class ListSaver extends FilterWidgetBase
             if (!$this->listFilterWidget || post('list_saver_preference')) {
                 return;
             }
+
             $scope = $this->listFilterWidget->getScope('listsaver');
             $this->listFilterWidget->putScopeValue('listsaver', null);
             $result['#' . $scope->getId('group')] = $this->listFilterWidget->makePartial('scope', ['scope' => $scope]);
@@ -51,6 +54,7 @@ class ListSaver extends FilterWidgetBase
     {
         $this->setProperties();
         $this->vars['listSaverPreferences'] = $this->getListSaverPreferences();
+        $this->vars['listSaverSharingEnabled'] = $this->getSharingEnabled();
         $this->vars['listFilterWidget'] = $this->listFilterWidget;
         $this->vars['scope'] = $this->filterScope;
         $this->vars['name'] = $this->getScopeName();
@@ -89,7 +93,7 @@ class ListSaver extends FilterWidgetBase
 
     public function onSaveListSaverPreference()
     {
-        if (!\BackendAuth::userHasAccess('sixgweb.listsaver.manage')) {
+        if (!\BackendAuth::userHasAccess('sixgweb.listsaver.access')) {
             return;
         }
 
@@ -98,6 +102,10 @@ class ListSaver extends FilterWidgetBase
         }
 
         $this->setProperties();
+
+        $private = $this->getSharingEnabled()
+            ? post('list_saver_private', 0)
+            : 1;
 
         $list = [
             'visible' => $this->listWidget->getUserPreference('visible'),
@@ -121,6 +129,8 @@ class ListSaver extends FilterWidgetBase
             'filter' => $filter,
             'namespace' => $this->getPreferenceNamespace(),
             'group' => $this->getPreferenceGroup(),
+            'backend_user_id' => BackendAuth::getUser()->id,
+            'is_private' => (bool)$private,
             'blueprint_uuid' => $this->controller->vars['activeSource']->uuid ?? null,
         ]);
 
@@ -135,7 +145,7 @@ class ListSaver extends FilterWidgetBase
 
     public function onDeleteListSaverPreference()
     {
-        if (!\BackendAuth::userHasAccess('sixgweb.listsaver.manage')) {
+        if (!\BackendAuth::userHasAccess('sixgweb.listsaver.access')) {
             return;
         }
 
@@ -144,6 +154,10 @@ class ListSaver extends FilterWidgetBase
         }
 
         if (!$preference = Preference::find($id)) {
+            return;
+        }
+
+        if ($preference->backend_user_id != BackendAuth::getUser()->id) {
             return;
         }
 
@@ -177,13 +191,6 @@ class ListSaver extends FilterWidgetBase
 
         $this->setProperties();
 
-        /**
-         * Calling this method forces the list widget to fire the list.extendColumns event
-         * in the defineListColumns method, allowing other extensions to modify the columns.
-         * These columns then become available to load from our preferences.
-         */
-        $this->listWidget->getVisibleColumns();
-
         $result = ['closePopover' => true];
         $this->listWidget->putUserPreference('visible', $preference->list['visible']);
         $this->listWidget->putUserPreference('order', $preference->list['order']);
@@ -191,10 +198,11 @@ class ListSaver extends FilterWidgetBase
 
         if ($this->listFilterWidget) {
             foreach ($this->listFilterWidget->getScopes() as $scope) {
+
+                //Plugin.php is now setting scope values in extendFilterScopesBefore
+                //Here we just update the partials and the listsaver value
                 if ($scope->scopeName == 'listsaver') {
                     $this->listFilterWidget->putScopeValue($scope, [$preference->id => $preference->name]);
-                } else {
-                    $this->listFilterWidget->putScopeValue($scope, $preference->filter[$scope->scopeName] ?? null);
                 }
                 $result['#' . $scope->getId('group')] = $this->listFilterWidget->makePartial('scope', ['scope' => $scope]);
             }
@@ -206,7 +214,7 @@ class ListSaver extends FilterWidgetBase
 
     protected function getListSaverPreferences()
     {
-        return Preference::where('namespace', $this->getPreferenceNamespace())
+        $query = Preference::where('namespace', $this->getPreferenceNamespace())
             ->where('group', $this->getPreferenceGroup())
             ->where(function ($query) {
                 if (isset($this->controller->vars['activeSource']->uuid)) {
@@ -215,7 +223,23 @@ class ListSaver extends FilterWidgetBase
                     $query->whereNull('blueprint_uuid');
                 }
             })
-            ->lists('name', 'id');
+            ->where(function ($query) {
+                $query->where('backend_user_id', BackendAuth::getUser()->id);
+                if (Settings::get('allow_shared_lists', false)) {
+                    $query->orWhere('is_private', 0);
+                }
+            });
+
+        /**
+         * Opportunity for other extensions to modify the getListSaver() query;
+         * 
+         * Event::listen('sixgweb.listsaver.listSaverPreferencesQuery', function (&$query) {
+         *  $query->whereNotIn('id', $this->getUserBlacklistedListSaverPreferences());
+         * });
+         */
+        Event::fire('sixgweb.listsaver.listSaverPreferencesQuery', [&$query]);
+
+        return $query->get();
     }
 
     protected function getPreferenceNamespace()
@@ -234,9 +258,20 @@ class ListSaver extends FilterWidgetBase
 
     protected function listSaverRefresh()
     {
-        $this->vars['listSaverPreferences'] = Preference::where('namespace', $this->getPreferenceNamespace())
-            ->where('group', $this->getPreferenceGroup())
-            ->lists('name', 'id');
+        $this->vars['listSaverPreferences'] = $this->getListSaverPreferences();
         return ['#listSaverPreferences' => $this->makePartial('listsaver_preferences')];
+    }
+
+    protected function getSharingEnabled()
+    {
+        if (!Settings::get('allow_shared_lists', false)) {
+            return false;
+        }
+
+        if (!\BackendAuth::userHasAccess('sixgweb.listsaver.share')) {
+            return false;
+        }
+
+        return true;
     }
 }

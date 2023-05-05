@@ -1,0 +1,5 @@
+fields:
+    allow_shared_lists:
+        label: Allow List Sharing
+        comment: When enabled, users can set the list to private or public
+        type: switch
