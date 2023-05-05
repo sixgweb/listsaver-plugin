@@ -14,3 +14,5 @@
   - closePopover return data, use getEventHandler and add refresh listener check
 1.0.7:
   - Fix blueprint_uuid migration
+1.0.8:
+  - Trigger list.extendColumns to load other plugin columns definitions, before refreshing the list.

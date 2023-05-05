@@ -75,7 +75,6 @@ class ListSaver extends FilterWidgetBase
             return null;
         }
 
-        exit('here');
         if ($id = post('list_saver_preference')) {
             $preference = Preference::find($id);
             return [$preference->id = $preference->name];
@@ -177,6 +176,13 @@ class ListSaver extends FilterWidgetBase
         }
 
         $this->setProperties();
+
+        /**
+         * Calling this method forces the list widget to fire the list.extendColumns event
+         * in the defineListColumns method, allowing other extensions to modify the columns.
+         * These columns then become available to load from our preferences.
+         */
+        $this->listWidget->getVisibleColumns();
 
         $result = ['closePopover' => true];
         $this->listWidget->putUserPreference('visible', $preference->list['visible']);
