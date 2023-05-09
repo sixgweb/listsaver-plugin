@@ -6,7 +6,20 @@
         'onDeleteListSaverPreference',
     ];
 
+    /**
+     * No firefox support for :has() css selector, so forced to add classes
+     */
+    let addListSaverClasses = () => {
+        let listSaver = document.querySelector('[data-scope-name="listsaver"]');
+        listSaver.parentElement.classList.add('filter-group-has-list-saver');
+        listSaver.parentElement.parentElement.classList.add('filter-has-list-saver');
+    };
+
     addEventListener('ajax:update-complete', (e) => {
+
+        //Add classes for every ajax update event
+        addListSaverClasses();
+
         let handler = e.detail.context.handler.split('::')[1] ?? null;
         let prefId = e.detail.context.options.data['list_saver_preference'] ?? null;
         let currPrefId = document.querySelector('[data-scope-name="listsaver"]').dataset.scopeId ?? null;
@@ -21,6 +34,7 @@
 
         if (handler === 'onApplyListSaverPreference') {
             document.dispatchEvent(new Event('mousedown'));
+            addListSaverClasses();
         }
 
         if (handler === 'onSaveListSaverPreference') {
@@ -34,11 +48,9 @@
     });
 
     /**
-     * No firefox support for :has() css selector, so forced to add classes
+     * Add classes on page loaded
      */
     addEventListener('page:loaded', (e) => {
-        let listSaver = document.querySelector('[data-scope-name="listsaver"]');
-        listSaver.parentElement.classList.add('filter-group-has-list-saver');
-        listSaver.parentElement.parentElement.classList.add('filter-has-list-saver');
+        addListSaverClasses();
     });
 })();
