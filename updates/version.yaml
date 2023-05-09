@@ -20,3 +20,5 @@
   - Add backend user id, public/private lists, share settings/permissions and event for extension
   - add_backend_user_id_to_preferences_table.php
   - add_is_private_to_preferences_table.php
+1.0.10:
+  - Move popover close logic to JS, add css classes for firefox support, use flex order instead of event listener priority and fix switch line-height

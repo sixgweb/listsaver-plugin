@@ -169,6 +169,6 @@ class Plugin extends PluginBase
                     'permissions' => ['sixgweb.listsaver.access'],
                 ],
             ]);
-        }, -1);
+        });
     }
 }

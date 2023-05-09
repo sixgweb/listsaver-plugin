@@ -1,10 +1,13 @@
-.control-filter:has([data-scope-name="listsaver"]) {
+/*No firefox support - .control-filter:has([data-scope-name="listsaver"])*/
+.filter-has-list-saver {
     display: flex;
     flex-wrap: wrap;
     align-items: end;
 }
 
-.filter-group:has([data-scope-name="listsaver"]) {
+/* No firefox support .filter-group:has([data-scope-name="listsaver"])*/
+.filter-group-has-list-saver {
     margin-left: auto;
     margin-right: -10px;
+    order: 100;
 }

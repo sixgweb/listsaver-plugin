@@ -43,7 +43,7 @@ Allow users with permission to set list as public or private.  Other users will 
 # Usage
 
 ## Save Current List/Filters
-Once your list setup and filters are in place, press the ListSave button, name your list and press save. If list sharing is enabled and you have permission, click the gear icon to set list to public/private before saving.
+Once your list setup and filters are in place, press the List Saver button, name your list and press save. If list sharing is enabled and you have permission, click the gear icon to set list to public/private before saving.
 
 ## Load List/Filters
 Click the list saver button and select from your currently saved lists.  If list sharing is enabled, you will see all public lists.

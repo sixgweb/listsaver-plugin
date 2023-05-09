@@ -139,7 +139,6 @@ class ListSaver extends FilterWidgetBase
 
         return [
             '#' . $scope->getId('group') => $this->listFilterWidget->makePartial('scope', ['scope' => $scope]),
-            'closePopover' => true,
         ];
     }
 
@@ -172,7 +171,6 @@ class ListSaver extends FilterWidgetBase
                 $scope = $this->listFilterWidget->getScope('listsaver');
                 $this->listFilterWidget->putScopeValue($scope, null);
                 $result['#' . $scope->getId('group')] = $this->listFilterWidget->makePartial('scope', ['scope' => $scope]);
-                $result['closePopover'] = true;
             }
         }
 
@@ -191,7 +189,6 @@ class ListSaver extends FilterWidgetBase
 
         $this->setProperties();
 
-        $result = ['closePopover' => true];
         $this->listWidget->putUserPreference('visible', $preference->list['visible']);
         $this->listWidget->putUserPreference('order', $preference->list['order']);
         $this->listWidget->putUserPreference('per_page', $preference->list['per_page']);
