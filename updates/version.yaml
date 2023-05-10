@@ -24,3 +24,5 @@
   - Move popover close logic to JS, add css classes for firefox support, use flex order instead of event listener priority and fix switch line-height
 1.0.11:
   - Add css classes for all filter update events
+1.0.12:
+  - Fix javascript errors and add some documentation

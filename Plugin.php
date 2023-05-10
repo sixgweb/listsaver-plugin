@@ -6,8 +6,6 @@ use Event;
 use System\Classes\PluginBase;
 use Sixgweb\ListSaver\Models\Preference;
 
-use function Ramsey\Uuid\v1;
-
 /**
  * Plugin Information File
  *
@@ -36,7 +34,9 @@ class Plugin extends PluginBase
     }
 
     /**
-     * registerPermissions used by the backend.
+     * Register permissions
+     *
+     * @return array
      */
     public function registerPermissions()
     {
@@ -56,6 +56,11 @@ class Plugin extends PluginBase
         ];
     }
 
+    /**
+     * Register listsaver filter widget
+     *
+     * @return array
+     */
     public function registerFilterWidgets()
     {
         return [
@@ -63,6 +68,11 @@ class Plugin extends PluginBase
         ];
     }
 
+    /**
+     * Register settings
+     *
+     * @return array
+     */
     public function registerSettings()
     {
         return [
@@ -111,18 +121,22 @@ class Plugin extends PluginBase
     protected function extendFilterScopesBefore()
     {
         Event::listen('backend.filter.extendScopesBefore', function ($filterWidget) {
+            //Not applying a listsaver list
             if (!post('scopeName') == 'listsaver') {
                 return;
             }
 
+            //No listsaver preference id posted
             if (!$id = post('list_saver_preference')) {
                 return;
             }
 
+            //Preference not found
             if (!$preference = Preference::find($id)) {
                 return;
             }
 
+            //Loop preference filters, add, push value to session and remove
             foreach ($preference->filter as $key => $value) {
                 $filterWidget->addScopes([
                     $key => [
@@ -157,6 +171,7 @@ class Plugin extends PluginBase
 
             $dependsOn = [];
 
+            //Widget depends on all scopes
             if ($allScopes = $filterWidget->getScopes()) {
                 $dependsOn = array_keys($allScopes);
             }

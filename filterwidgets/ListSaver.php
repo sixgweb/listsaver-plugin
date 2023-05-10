@@ -19,6 +19,11 @@ class ListSaver extends FilterWidgetBase
     public $listFilterWidget;
     public $listWidget;
 
+    /**
+     * Initialize the widget and add list.refresh event listener
+     *
+     * @return void
+     */
     public function init()
     {
         //For now, clear list saver if any refresh occurs on the list setup.
@@ -38,18 +43,33 @@ class ListSaver extends FilterWidgetBase
         });
     }
 
+    /**
+     * Render widget
+     *
+     * @return void
+     */
     public function render()
     {
         $this->prepareVars();
         return $this->makePartial('listsaver');
     }
 
+    /**
+     * Render form
+     *
+     * @return void
+     */
     public function renderForm()
     {
         $this->prepareVars();
         return $this->makePartial('listsaver_form');
     }
 
+    /**
+     * Prepare view variables
+     *
+     * @return void
+     */
     public function prepareVars()
     {
         $this->setProperties();
@@ -61,18 +81,33 @@ class ListSaver extends FilterWidgetBase
         $this->vars['value'] = $this->getLoadValue();
     }
 
+    /**
+     * Set widget properties
+     *
+     * @return void
+     */
     public function setProperties()
     {
         $this->listFilterWidget = $this->controller->listGetFilterWidget();
         $this->listWidget = $this->controller->listGetWidget();
     }
 
+    /**
+     * Add css/js assets
+     *
+     * @return void
+     */
     public function loadAssets()
     {
         $this->addCss('css/listsaver.css');
         $this->addJs('js/listsaver.js');
     }
 
+    /**
+     * Get active value for this widget
+     *
+     * @return void
+     */
     public function getActiveValue()
     {
         if (post('clearScope')) {
@@ -87,10 +122,11 @@ class ListSaver extends FilterWidgetBase
         return null;
     }
 
-    public function applyScopeToQuery($query)
-    {
-    }
-
+    /**
+     * Save posted list saver name and filter/list setup values
+     *
+     * @return void
+     */
     public function onSaveListSaverPreference()
     {
         if (!\BackendAuth::userHasAccess('sixgweb.listsaver.access')) {
