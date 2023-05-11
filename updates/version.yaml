@@ -26,3 +26,5 @@
   - Add css classes for all filter update events
 1.0.12:
   - Fix javascript errors and add some documentation
+1.0.13:
+  - Always refresh widget content on ajax requests and update javascript logic

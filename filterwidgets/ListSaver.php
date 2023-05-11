@@ -201,14 +201,16 @@ class ListSaver extends FilterWidgetBase
         $preference->delete();
 
         $result = $this->listSaverRefresh();
+        $scope = $this->listFilterWidget->getScope('listsaver');
 
         if ($value = $this->getLoadValue()) {
             if (key($value) == $id) {
-                $scope = $this->listFilterWidget->getScope('listsaver');
                 $this->listFilterWidget->putScopeValue($scope, null);
-                $result['#' . $scope->getId('group')] = $this->listFilterWidget->makePartial('scope', ['scope' => $scope]);
             }
         }
+
+        $result['#' . $scope->getId('group')] = $this->listFilterWidget->makePartial('scope', ['scope' => $scope]);
+
 
         return $result;
     }
