@@ -4,7 +4,9 @@ namespace Sixgweb\ListSaver;
 
 use Event;
 use System\Classes\PluginBase;
+use Sixgweb\ListSaver\Models\Settings;
 use Sixgweb\ListSaver\Models\Preference;
+use Backend\Classes\Controller as BackendController;
 
 /**
  * Plugin Information File
@@ -28,9 +30,13 @@ class Plugin extends PluginBase
 
     public function boot()
     {
-        $this->extendListControllerConfig();
-        $this->extendFilterScopesBefore();
         $this->extendFilterScopes();
+        $this->extendFilterScopesBefore();
+        $this->extendListControllerConfig();
+
+        if (Settings::get('uselist_filename')) {
+            $this->extendImportExportControllerConfig();
+        }
     }
 
     /**
@@ -111,6 +117,61 @@ class Plugin extends PluginBase
     }
 
     /**
+     * If exporting and useList is true, then set the export fileName to the
+     * listsaver name, if it has one.
+     * 
+     * Notes: If your controller overrides the behaviors export method and you're dynamically
+     * setting export[useList] in the export override, this will not work.  Move the
+     * useList override to the constructor, after parent::__construct() is called.
+     *
+     * @return void
+     */
+    protected function extendImportExportControllerConfig()
+    {
+        Event::listen('backend.page.beforeDisplay', function ($controller) {
+
+            //Only run on the export action
+            if ($controller->getAction() == 'export') {
+
+                //If importExportController config useList is false, then return
+                $exportController = $controller->asExtension('ImportExportController');
+                if (!$exportController->getConfig('export[useList]')) {
+                    return;
+                }
+
+                if (!$listController = $controller->asExtension('ListController')) {
+                    return;
+                }
+
+                //Make the listWidget and set the filterWidget
+                $listController->makeList();
+
+                //Get the filterWidget or return
+                if (!$filterWidget = $listController->listGetFilterWidget()) {
+                    return;
+                }
+
+                //Get the listSaver scope or return
+                if (!$listSaver = $filterWidget->getScope('listsaver')) {
+                    return;
+                }
+
+                //Get the scopeValue or return
+                if (!$val = $filterWidget->getScopeValue($listSaver)) {
+                    return;
+                }
+
+                //Slugify the listsaver value and set the export fileName
+                $val = is_array($val) ? $val[key($val)] : $val;
+                $val = str_slug($val);
+                $config = $exportController->getConfig('export');
+                $config['fileName'] = $val;
+                $exportController->setConfig(['export' => $config]);
+            }
+        });
+    }
+
+    /**
      * This is a workaround to set scopevalues in the session 
      * before other plugins reference them.  We remove the scope
      * to allow the filter widget to correctly handle the scope type
@@ -164,8 +225,9 @@ class Plugin extends PluginBase
                 return;
             }
 
+            $actions = ['index', 'export'];
             //Check if is index action in ListController
-            if ($filterWidget->getController()->getAction() != 'index') {
+            if (in_array($filterWidget->getController()->getAction(), $actions) === false) {
                 return;
             }
 
@@ -178,7 +240,7 @@ class Plugin extends PluginBase
 
             $filterWidget->addScopes([
                 'listsaver' => [
-                    'label' => 'List Saver',
+                    'label' => __('List Saver'),
                     'type' => 'listsaver',
                     'dependsOn' => $dependsOn,
                     'permissions' => ['sixgweb.listsaver.access'],

@@ -16,8 +16,10 @@ use Sixgweb\ListSaver\Models\Preference;
  */
 class ListSaver extends FilterWidgetBase
 {
-    public $listFilterWidget;
     public $listWidget;
+    public $listFilterWidget;
+    public $listSearchWidget;
+    public $listToolbarWidget;
 
     /**
      * Initialize the widget and add list.refresh event listener
@@ -88,8 +90,15 @@ class ListSaver extends FilterWidgetBase
      */
     public function setProperties()
     {
-        $this->listFilterWidget = $this->controller->listGetFilterWidget();
         $this->listWidget = $this->controller->listGetWidget();
+        $this->listFilterWidget = $this->controller->listGetFilterWidget();
+
+        //Hoping OCMS team will add this method like they have for filterwidgets
+        if ($this->controller->methodExists('listGetToolbarWidget')) {
+            if ($this->listToolbarWidget = $this->controller->listGetToolbarWidget()) {
+                $this->listSearchWidget = $this->listToolbarWidget->getSearchWidget();
+            }
+        }
     }
 
     /**
@@ -143,6 +152,8 @@ class ListSaver extends FilterWidgetBase
             ? post('list_saver_private', 0)
             : 1;
 
+        $searchTerm = $this->listSearchWidget ? $this->listSearchWidget->getActiveTerm() : null;
+
         $list = [
             'visible' => $this->listWidget->getUserPreference('visible'),
             'order' => $this->listWidget->getUserPreference('order'),
@@ -163,6 +174,7 @@ class ListSaver extends FilterWidgetBase
             'name' => $name,
             'list' => $list,
             'filter' => $filter,
+            'search_term' => $searchTerm,
             'namespace' => $this->getPreferenceNamespace(),
             'group' => $this->getPreferenceGroup(),
             'backend_user_id' => BackendAuth::getUser()->id,
@@ -227,10 +239,21 @@ class ListSaver extends FilterWidgetBase
 
         $this->setProperties();
 
+        $result = [];
+
+        //List setup preferences
         $this->listWidget->putUserPreference('visible', $preference->list['visible']);
         $this->listWidget->putUserPreference('order', $preference->list['order']);
         $this->listWidget->putUserPreference('per_page', $preference->list['per_page']);
 
+        //Search term
+        if ($this->listSearchWidget) {
+            $this->listSearchWidget->setActiveTerm($preference->search_term);
+            $this->listWidget->setSearchTerm($preference->search_term);
+            $result['#' . $this->listSearchWidget->getId()] = $this->listSearchWidget->render();
+        }
+
+        //Filter scopes
         if ($this->listFilterWidget) {
             foreach ($this->listFilterWidget->getScopes() as $scope) {
 

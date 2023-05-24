@@ -33,6 +33,7 @@ class Preference extends Model
         'blueprint_uuid',
         'list',
         'filter',
+        'search_term',
     ];
 
     public $jsonable = [

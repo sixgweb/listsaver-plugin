@@ -3,3 +3,19 @@ fields:
         label: Allow List Sharing
         comment: When enabled, users can set the list to private or public
         type: switch
+
+    uselist_filename:
+        label: Use ListSaver Name as List Export File Name
+        type: switch
+        comment: Use the ListSaver name slug for the list export file name, if a ListSaver is selected.
+
+    _uselist_filename_tip:
+        label: Heads Up
+        type: hint
+        mode: info
+        comment: Filename override only works when export <a href="https://docs.octobercms.com/3.x/extend/importexport/importexport-controller.html#integration-with-list-behavior" target="_blank">useList</a> is enabled
+        commentHtml: true
+        trigger:
+            field: uselist_filename
+            condition: checked
+            action: show

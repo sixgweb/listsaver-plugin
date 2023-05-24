@@ -28,3 +28,8 @@
   - Fix javascript errors and add some documentation
 1.0.13:
   - Always refresh widget content on ajax requests and update javascript logic
+1.0.14:
+  - Add search term to preferences table and save search term during list saver creation, once enabled in OCMS core.
+  - add_search_term_to_preferences_table.php
+1.0.15:
+  - New setting to use the ListSaver name slug for the list export file name.  Extend export config to use ListSaver name, if setting enabled.
