@@ -2,15 +2,15 @@ Save the current list setup and filter values for all [ListControllers](https://
 
 # Installation
 
-### Requirements
+Requirements
 - OctoberCMS 3.x
 
-## Composer
+### Composer
 ```
 composer require sixgweb/listsaver-plugin
 ```
 
-## Marketplace
+### Marketplace
 
 Add the plugin to your project via the [OctoberCMS Market Place](https://octobercms.com/plugin/sixgweb-listsaver).
 
@@ -26,31 +26,34 @@ In the Backend, visit **Settings->System Updates->Install Packages** press the *
 
 # Permissions
 
-## Access Lists
+### Access Lists
 User can access ListSaver and save/load their private lists or public lists (if sharing enabled and has permission).  Users can always delete their own lists.
 
-## Share Lists
+### Share Lists
 User can set lists as public/private when saving, if list sharing enabled.
 
-## Access Settings
+### Access Settings
 User can access ListSaver settings
 
 # Settings
 
-## Allow List Sharing
+### Allow List Sharing
 Allow users with permission to set list as public or private.  Other users will see all public lists.
+
+### Use ListSaver Name as List Export File Name
+When [Exporting List Results](https://docs.octobercms.com/3.x/extend/importexport/importexport-controller.html#integration-with-list-behavior), use the selected ListSaver value as the export filename.
 
 # Usage
 
-## Save Current List/Filters
+### Save Current List/Filters
 Once your list setup and filters are in place, press the List Saver button, name your list and press save. If list sharing is enabled and you have permission, click the gear icon to set list to public/private before saving.
 
-## Load List/Filters
+### Load List/Filters
 Click the list saver button and select from your currently saved lists.  If list sharing is enabled, you will see all public lists.
 
 # Events
 
-## listSaverPreferencesQuery
+### listSaverPreferencesQuery
 Opportunity for 3rd party developers to modify the preferences query.
 ``` php
 Event::listen('sixgweb.listsaver.listSaverPreferencesQuery', function (&$query) {

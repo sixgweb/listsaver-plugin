@@ -264,6 +264,9 @@ class ListSaver extends FilterWidgetBase
                 }
                 $result['#' . $scope->getId('group')] = $this->listFilterWidget->makePartial('scope', ['scope' => $scope]);
             }
+
+            //Fire the filterWidget event to allow other plugins to update the response
+            $result = $this->listFilterWidget->extendScopeUpdateResponse($result, []);
         }
 
         return $result + $this->controller->listRefresh();

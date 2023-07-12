@@ -33,3 +33,5 @@
   - add_search_term_to_preferences_table.php
 1.0.15:
   - New setting to use the ListSaver name slug for the list export file name.  Extend export config to use ListSaver name, if setting enabled.
+1.0.16:
+  - Call extendScopeUpdateResponse event to allow other plugins to extend the filterWidget response data. 
