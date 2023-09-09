@@ -2,6 +2,7 @@
 
 namespace Sixgweb\ListSaver;
 
+use App;
 use Event;
 use System\Classes\PluginBase;
 use Sixgweb\ListSaver\Models\Settings;
@@ -15,6 +16,12 @@ use Backend\Classes\Controller as BackendController;
  */
 class Plugin extends PluginBase
 {
+
+    /**
+     * Memoized flag to determine if the plugin is disabled for the current controller
+     */
+    protected $isEnabledForPath;
+
     /**
      * pluginDetails about this plugin.
      */
@@ -30,12 +37,14 @@ class Plugin extends PluginBase
 
     public function boot()
     {
-        $this->extendFilterScopes();
-        $this->extendFilterScopesBefore();
-        $this->extendListControllerConfig();
+        if (App::runningInBackend() && $this->isEnabledForPath()) {
+            $this->extendFilterScopes();
+            $this->extendFilterScopesBefore();
+            $this->extendListControllerConfig();
 
-        if (Settings::get('uselist_filename')) {
-            $this->extendImportExportControllerConfig();
+            if (Settings::get('uselist_filename')) {
+                $this->extendImportExportControllerConfig();
+            }
         }
     }
 
@@ -247,5 +256,30 @@ class Plugin extends PluginBase
                 ],
             ]);
         });
+    }
+
+    protected function isEnabledForPath()
+    {
+        if (isset($this->isEnabledForPath)) {
+            return $this->isEnabledForPath;
+        }
+
+        $this->isEnabledForPath = true;
+
+        if ($enabled = Settings::get('enabled_paths')) {
+            $this->isEnabledForPath = false;
+            foreach ($enabled as $enable) {
+                $path = $enable['path'] ?? '';
+                if (isset($path[0]) && $path[0] == '/') {
+                    $path = substr($path, 1);
+                }
+                if ($path == \Request::path()) {
+                    $this->isEnabledForPath = true;
+                    break;
+                }
+            }
+        }
+
+        return $this->isEnabledForPath;
     }
 }

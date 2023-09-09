@@ -19,3 +19,16 @@ fields:
             field: uselist_filename
             condition: checked
             action: show
+
+    enabled_paths:
+        type: repeater
+        label: Enabled Paths
+        prompt: Add Path
+        commentAbove: By default, ListSaver is enabled on all ListControllers.  To limit the ListSaver to specific paths, add them here by selecting an existing backend navigation item or enter your own path (backend/author/plugin/controller)
+        form:
+            fields:
+                path:
+                    type: dropdown
+                    label: Path
+                    attributes:
+                        data-token-separators: '|'
