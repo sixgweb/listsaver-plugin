@@ -37,3 +37,5 @@
   - Call extendScopeUpdateResponse event to allow other plugins to extend the filterWidget response data. 
 1.0.17:
   - Add enabled paths setting to limit ListSaver to specific paths.
+1.0.18:
+  - Declare missing $options variable in settings

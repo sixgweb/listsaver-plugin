@@ -14,6 +14,7 @@ class Settings extends \System\Models\SettingModel
 
     public function getPathOptions()
     {
+        $options = [];
         $custom = [];
 
         if ($this->enabled_paths) {
