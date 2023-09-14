@@ -93,7 +93,6 @@ class ListSaver extends FilterWidgetBase
         $this->listWidget = $this->controller->listGetWidget();
         $this->listFilterWidget = $this->controller->listGetFilterWidget();
 
-        //Hoping OCMS team will add this method like they have for filterwidgets
         if ($this->controller->methodExists('listGetToolbarWidget')) {
             if ($this->listToolbarWidget = $this->controller->listGetToolbarWidget()) {
                 $this->listSearchWidget = $this->listToolbarWidget->getSearchWidget();
@@ -131,6 +130,25 @@ class ListSaver extends FilterWidgetBase
         return null;
     }
 
+    public function applyScopeToQuery($query)
+    {
+        $value = $this->getLoadValue();
+        $preference = Preference::find(key($value));
+
+        /**
+         * Opportunity for other plugins to extend the scope query
+         * 
+         * Event::listen('sixgweb.listsaver.applyScopeToQuery', function ($listSaverWidget, $preference, $query) {
+         *   $ids = $preference->list['checked'] ?? [];
+         *   if (!empty($ids)) {
+         *       $query->whereIn('id', $ids);
+         *   }
+         *});*
+         */
+
+        Event::fire('sixgweb.listsaver.applyScopeToQuery', [$this, $preference, &$query]);
+    }
+
     /**
      * Save posted list saver name and filter/list setup values
      *
@@ -158,6 +176,7 @@ class ListSaver extends FilterWidgetBase
             'visible' => $this->listWidget->getUserPreference('visible'),
             'order' => $this->listWidget->getUserPreference('order'),
             'per_page' => $this->listWidget->getUserPreference('per_page'),
+            'checked' => post('checked', []),
         ];
 
         $filter = [];
