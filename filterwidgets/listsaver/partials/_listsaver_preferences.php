@@ -4,10 +4,10 @@
         <?php foreach ($listSaverPreferences as $listSaverPreference) : ?>
             <li>
                 <div class="d-flex g-0 align-items-center">
-                    <a data-request="<?= $this->getEventHandler('onApplyListSaverPreference') ?>" data-request-data="list_saver_preference:<?= $listSaverPreference->id ?>" class="dropdown-item w-100" href="#"><?= $listSaverPreference->name ?></a>
+                    <a data-request="<?= $this->getEventHandler('onApplyListSaverPreference') ?>" data-request-data="list_saver_preference:<?= $listSaverPreference->id ?>" class="text-secondary link-primary w-100" href="#" title="<?= __('Load List') ?>"><?= $listSaverPreference->name ?></a>
 
                     <?php if ($listSaverPreference->backend_user_id == $backendUserId) : ?>
-                        <a data-request="<?= $this->getEventHandler('onDeleteListSaverPreference') ?>" data-request-data="list_saver_preference:<?= $listSaverPreference->id ?>" data-request-success="" class="dropdown-item px-1 w-auto text-secondary" href="#"><i class="bi-x-circle-fill"></i></a>
+                        <a data-request="<?= $this->getEventHandler('onDeleteListSaverPreference') ?>" data-request-data="list_saver_preference:<?= $listSaverPreference->id ?>" data-request-success="" class="link-danger px-1 w-auto text-secondary" href="#" title="<?= __('Delete List') ?>"><i class="bi-x-circle-fill"></i></a>
                     <?php endif; ?>
                 </div>
             </li>

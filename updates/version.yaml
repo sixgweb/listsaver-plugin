@@ -41,3 +41,5 @@
   - Declare missing $options variable in settings
 1.0.19:
   - Add checked to list column and new event sixgweb.listsaver.applyScopeToQuery
+1.0.20:
+  - Check for listSaver actions in list_config.yaml to enable/disable listSaver on specific controller actions

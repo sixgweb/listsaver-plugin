@@ -13,11 +13,11 @@
                 ><?= __('Save') ?></button>
                 <?php if ($listSaverSharingEnabled) : ?>
                     <button 
-                        class="btn btn-link text-secondary" 
+                        class="btn btn-link text-secondary p-0 ps-2" 
                         type="button" 
                         data-bs-toggle="dropdown" 
                         aria-expanded="false"
-                    ><i class="bi-gear"></i></button>
+                    ><i class="bi-gear me-1"></i></button>
                     <div class="dropdown-menu p-2">
                         <div class="form-check-sm form-check form-switch" style="line-height:var(--bs-body-line-height)">
                             <input name="list_saver_private" value="1" class="form-check-input" type="checkbox" role="switch" id="listSaverPrivate" checked>

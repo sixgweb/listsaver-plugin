@@ -234,8 +234,20 @@ class Plugin extends PluginBase
                 return;
             }
 
-            $actions = ['index', 'export'];
-            //Check if is index action in ListController
+            /**
+             * Add ability to define listSaver actions in list_config.yaml
+             * 
+             * listSaver:
+             *     actions:
+             *         - index
+             *         - export
+             *         - customAction
+             */
+            $listConfig = $filterWidget->getController()->listGetConfig();
+
+            $actions = $listConfig->listSaver['actions'] ?? ['index', 'export'];
+
+            //Skip if not in defined actions
             if (in_array($filterWidget->getController()->getAction(), $actions) === false) {
                 return;
             }
