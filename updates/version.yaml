@@ -43,3 +43,5 @@
   - Add checked to list column and new event sixgweb.listsaver.applyScopeToQuery
 1.0.20:
   - Check for listSaver actions in list_config.yaml to enable/disable listSaver on specific controller actions
+1.0.21:
+  - Fix call to Tailor Entries ListGetConfig missing parameter

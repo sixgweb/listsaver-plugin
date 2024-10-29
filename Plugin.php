@@ -243,7 +243,7 @@ class Plugin extends PluginBase
              *         - export
              *         - customAction
              */
-            $listConfig = $filterWidget->getController()->listGetConfig();
+            $listConfig = $filterWidget->getController()->listGetConfig(null);
 
             $actions = $listConfig->listSaver['actions'] ?? ['index', 'export'];
 
