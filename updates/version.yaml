@@ -45,3 +45,5 @@
   - Check for listSaver actions in list_config.yaml to enable/disable listSaver on specific controller actions
 1.0.21:
   - Fix call to Tailor Entries ListGetConfig missing parameter
+1.0.22:
+  - Use scopeName property instead of getName method to avoid array prefix changes in OCMS 3.7.4

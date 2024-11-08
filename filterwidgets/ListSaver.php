@@ -79,7 +79,7 @@ class ListSaver extends FilterWidgetBase
         $this->vars['listSaverSharingEnabled'] = $this->getSharingEnabled();
         $this->vars['listFilterWidget'] = $this->listFilterWidget;
         $this->vars['scope'] = $this->filterScope;
-        $this->vars['name'] = $this->getScopeName();
+        $this->vars['name'] = $this->scopeName;
         $this->vars['value'] = $this->getLoadValue();
     }
 
